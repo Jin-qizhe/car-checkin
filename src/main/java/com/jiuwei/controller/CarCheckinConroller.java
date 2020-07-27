@@ -127,51 +127,9 @@ public class CarCheckinConroller {
         }
     }
 
-    //查询借用次数
-    @PostMapping("/getusetimes")
-    public SysResult getusetimes(CarDaka carDaka){
-        int num=carCheckinService.getusetimes(carDaka);
-        if(num>0){
-            return SysResult.build(200, "查询成功", num);
-        }else{
-            return SysResult.build(201, "没有使用记录", null);
-        }
-    }
-
-    //查询本次使用时间
-    @PostMapping("/usetime")
-    public SysResult usetime(CarDaka carDaka) throws ParseException {
-        List<CarDaka> list=carCheckinService.getdetail(carDaka);
-        String t1=list.get(0).getReturnTime();
-        String t2=list.get(0).getBorrowTime();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date1 = format.parse(t1);
-        Date date2 = format.parse(t2);
-
-        long day = (date1.getTime() - date2.getTime()) / (24 * 60 * 60 * 1000);
-        long hours = (date1.getTime() - date2.getTime()) / (60 * 60 * 1000);
-        long minutes = (date1.getTime() - date2.getTime()) / (60 * 1000);
-        long seconds = (date1.getTime() - date2.getTime()) / (1000);
-        String use="本次使用"+hours+"时"+(minutes-60*hours)+"分"+(seconds-60*minutes)+"秒";
-        System.out.println(use);
-        if(list.size()>0){
-            return SysResult.build(200, "查询成功", use);
-        }else{
-            return SysResult.build(201, "没有使用记录", null);
-        }
-    }
-
-    //查询最近一次使用记录
-    @PostMapping("/lastusetime")
-    public SysResult lastusetime(CarDaka carDaka){
-        List<CarDaka> list=carCheckinService.lastusetime(carDaka);
-        if(list.size()>0){
-            return SysResult.build(200, "查询成功", list.get(0).getBorrowTime());
-        }else{
-            return SysResult.build(201, "没有使用记录", null);
-        }
-    }
-
+    /*
+    查询某个用户出车次数;总出车时长;最近一次出车时间
+     */
     @PostMapping("use")
     public SysResult use(CarDaka carDaka) throws ParseException {
         int num=carCheckinService.getusetimes(carDaka);
