@@ -175,7 +175,7 @@ public class CarCheckinConroller {
     @PostMapping("use")
     public SysResult use(CarDaka carDaka) throws ParseException {
         int num=carCheckinService.getusetimes(carDaka);
-        System.out.println(num);
+        //System.out.println(num);
         if(num>0){
             List<CarDaka> list1=carCheckinService.getalltime(carDaka);
             // long day = 0;
@@ -199,7 +199,7 @@ public class CarCheckinConroller {
             long minute = (seconds%3600)/60;
             long second = (seconds%3600)%60;
             String usetime;
-            System.out.println(seconds);
+            //System.out.println(seconds);
             if(seconds>0){
                 usetime="一共使用"+hour+"时"+minute+"分"+second+"秒";
             }else{
@@ -208,7 +208,6 @@ public class CarCheckinConroller {
 
             List<CarDaka> list2=carCheckinService.lastusetime(carDaka);
             String lasttime=list2.get(0).getBorrowTime();
-            Object o=new Object();
             Map <Object, Object> list3 = new HashMap <Object, Object>();
             list3.put("num",num);
             list3.put("usetime",usetime);
