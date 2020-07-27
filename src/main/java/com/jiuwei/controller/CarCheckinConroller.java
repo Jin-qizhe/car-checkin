@@ -166,11 +166,11 @@ public class CarCheckinConroller {
 
             List<CarDaka> list2=carCheckinService.lastusetime(carDaka);
             String lasttime=list2.get(0).getBorrowTime();
-            Map <Object, Object> list3 = new HashMap <Object, Object>();
-            list3.put("num",num);
-            list3.put("usetime",usetime);
-            list3.put("lasttime",lasttime);
-            return SysResult.build(200, "查询成功", list3);
+            JSONObject object=new JSONObject();
+            object.put("num",num);
+            object.put("usetime",usetime);
+            object.put("lasttime",lasttime);
+            return SysResult.build(200, "查询成功", object);
         }else{
             return SysResult.build(201, "未查到我的使用记录", null);
         }
