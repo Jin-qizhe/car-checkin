@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuwei.dao.CarCheckinMapper">
+    <insert id="borrowCar" parameterType="CarDaka">
+        insert into t_cardaka(
+        daka_id,
+        user_id,
+		borrow_time,
+		borrow_pic,
+		use_state
+        )
+        values
+        (
+        #{dakaId},
+        #{userId},
+		#{borrowTime},
+		#{borrowPic},
+		#{useState}
+        )
+	</insert>
+
+    <update id="returnCar" parameterType="CarDaka">
+		update t_cardaka
+		set
+		return_time=#{returnTime},
+		return_pic=#{returnPic},
+		leave_word=#{leaveWord},
+		use_state=#{useState}
+		where user_id=#{userId} and use_state='已借用!'
+	</update>
+
+    <select id="search" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka
+	</select>
+
+    <select id="getstate" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where user_id=#{userId} and use_state='已借用!'
+	</select>
+
+	<select id="getdetail" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where daka_id=#{dakaId}
+	</select>
+
+	<select id="getcurrent" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where daka_id=#{dakaId}
+	</select>
+
+	<select id="getusetimes" parameterType="CarDaka" resultType="int">
+		select count(user_id) from t_cardaka where user_id=#{userId}
+	</select>
+
+	<select id="lastusetime" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where user_id=#{userId} order by #{borrowTime} desc
+	</select>
+
+	<select id="getalltime" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where user_id=#{userId} and use_state='已归还!'
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
