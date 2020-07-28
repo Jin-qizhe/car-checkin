@@ -1,5 +1,6 @@
 package com.jiuwei.dao;
 
+import com.jiuwei.entity.Accident;
 import com.jiuwei.entity.CarDaka;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,12 @@ public interface CarCheckinMapper {
     List<CarDaka> lastusetime(CarDaka carDaka);
 
     List<CarDaka> getalltime(CarDaka carDaka);
+
+    void accident(Accident accident);
+
+    List<Accident> getaccident(Accident accident);
+
+    List<Accident> accidentdetail(Accident accident);
 
     //List<CarDaka> getcurrent(CarDaka carDaka);
 

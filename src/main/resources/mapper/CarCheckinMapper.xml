@@ -6,6 +6,7 @@
         insert into t_cardaka(
         daka_id,
         user_id,
+        car_id,
 		borrow_time,
 		borrow_pic,
 		use_state
@@ -14,6 +15,7 @@
         (
         #{dakaId},
         #{userId},
+        #{carId},
 		#{borrowTime},
 		#{borrowPic},
 		#{useState}
@@ -31,7 +33,7 @@
 	</update>
 
     <select id="search" parameterType="CarDaka" resultType="CarDaka">
-		select * from t_cardaka
+		select * from t_cardaka order by borrow_time desc
 	</select>
 
     <select id="getstate" parameterType="CarDaka" resultType="CarDaka">
@@ -51,12 +53,41 @@
 	</select>
 
 	<select id="lastusetime" parameterType="CarDaka" resultType="CarDaka">
-		select * from t_cardaka where user_id=#{userId} order by #{borrowTime} desc
+		select * from t_cardaka where user_id=#{userId} order by borrow_time desc
 	</select>
 
 	<select id="getalltime" parameterType="CarDaka" resultType="CarDaka">
 		select * from t_cardaka where user_id=#{userId} and use_state='已归还!'
 	</select>
+
+	<insert id="accident" parameterType="Accident">
+        insert into t_accident(
+        ac_id,
+        ac_time,
+        user_id,
+		ac_pics,
+		ac_word,
+		car_id
+        )
+        values
+        (
+        #{acId},
+        #{acTime},
+        #{userId},
+		#{acPics},
+		#{acWord},
+		#{carId}
+        )
+	</insert>
+
+	<select id="getaccident" parameterType="Accident" resultType="Accident">
+		select * from t_accident order by ac_time desc
+	</select>
+
+	<select id="accidentdetail" parameterType="Accident" resultType="Accident">
+		select * from t_accident where ac_id=#{acId}
+	</select>
+
 
 </mapper>
 

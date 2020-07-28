@@ -5,12 +5,21 @@ import java.util.Date;
 public class CarDaka {
     private String dakaId;
     private String userId;
+    private String carId;
     private String borrowTime;
     private String borrowPic;
     private String returnTime;
     private String returnPic;
     private String leaveWord;
     private String useState;
+
+    public String getCarId() {
+        return carId;
+    }
+
+    public void setCarId(String carId) {
+        this.carId = carId;
+    }
 
     public String getDakaId() {
         return dakaId;
