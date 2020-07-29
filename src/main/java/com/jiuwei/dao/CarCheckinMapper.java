@@ -1,7 +1,9 @@
 package com.jiuwei.dao;
 
 import com.jiuwei.entity.Accident;
+import com.jiuwei.entity.Car;
 import com.jiuwei.entity.CarDaka;
+import com.jiuwei.entity.Openid;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +32,19 @@ public interface CarCheckinMapper {
     List<Accident> getaccident(Accident accident);
 
     List<Accident> accidentdetail(Accident accident);
+
+    List<Car> canUsecar(Car car);
+
+    void changeCarstate(Car car);
+
+    List<Openid> getOpenid(Openid openid);
+
+    List<Car> carstate(Car car);
+
+    List<CarDaka> vaguesearch(CarDaka carDaka);
+
+    List<Accident> accidentvaguesearch(Accident accident);
+
 
     //List<CarDaka> getcurrent(CarDaka carDaka);
 

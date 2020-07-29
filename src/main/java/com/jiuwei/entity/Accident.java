@@ -9,6 +9,15 @@ public class Accident {
     private String acPics;
     private String acWord;
     private String carId;
+    private String openId;
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
 
     public String getAcWord() {
         return acWord;

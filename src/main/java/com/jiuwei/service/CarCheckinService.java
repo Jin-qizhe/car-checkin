@@ -5,7 +5,9 @@ import com.jiuwei.common.PicUpload;
 import com.jiuwei.common.PicsUpload;
 import com.jiuwei.dao.CarCheckinMapper;
 import com.jiuwei.entity.Accident;
+import com.jiuwei.entity.Car;
 import com.jiuwei.entity.CarDaka;
+import com.jiuwei.entity.Openid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,10 +24,11 @@ public class CarCheckinService {
     @Autowired
     private CarCheckinMapper carCheckinMapper;
 
-    public void borrowCar(CarDaka carDaka,MultipartFile pic) {
+    public void borrowCar(Car car,CarDaka carDaka, MultipartFile pic) {
         SimpleDateFormat a=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         carDaka.setDakaId(UUID.randomUUID().toString().replaceAll("-",""));
         carDaka.setUseState("已借用!");
+        //car.setCarState("不可借用!");
         String url=PicUpload.uploadFile(pic);
         //System.out.println("service1:"+pic);
         carDaka.setBorrowPic(url);
@@ -36,7 +39,7 @@ public class CarCheckinService {
         carCheckinMapper.borrowCar(carDaka);
     }
 
-    public void returnCar(CarDaka carDaka,MultipartFile pic) {
+    public void returnCar(Car car,CarDaka carDaka,MultipartFile pic) {
         SimpleDateFormat a=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String url=PicUpload.uploadFile(pic);
         carDaka.setReturnPic(url);
@@ -46,6 +49,7 @@ public class CarCheckinService {
         //date=new Date(times);
         carDaka.setReturnTime(a.format(date));
         carDaka.setUseState("已归还!");
+        //car.setCarState("可借用!");
         carCheckinMapper.returnCar(carDaka);
     }
 
@@ -105,8 +109,35 @@ public class CarCheckinService {
         return exist;
     }
 
-   
+    public List<Car> canUsecar(Car car) {
+        List<Car> exist=carCheckinMapper.canUsecar(car);
+        return exist;
+    }
 
+    public void changeCarstate(Car car) {
+        carCheckinMapper.changeCarstate(car);
+    }
+
+    public List<Openid> getOpenid(Openid openid) {
+        List<Openid> exist=carCheckinMapper.getOpenid(openid);
+        return exist;
+    }
+
+    //查询某个车牌是否可用
+    public List<Car> carstate(Car car) {
+        List<Car> list=carCheckinMapper.carstate(car);
+        return list;
+    }
+
+    public List<CarDaka> vaguesearch(CarDaka carDaka) {
+        List<CarDaka> exist=carCheckinMapper.vaguesearch(carDaka);
+        return exist;
+    }
+
+    public List<Accident> accidentvaguesearch(Accident accident) {
+        List<Accident> exist=carCheckinMapper.accidentvaguesearch(accident);
+        return exist;
+    }
 
 
     /*public List<CarDaka> getcurrent(CarDaka carDaka) {

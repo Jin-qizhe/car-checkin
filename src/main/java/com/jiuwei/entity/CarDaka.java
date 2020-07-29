@@ -12,6 +12,15 @@ public class CarDaka {
     private String returnPic;
     private String leaveWord;
     private String useState;
+    private String openId;
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
 
     public String getCarId() {
         return carId;

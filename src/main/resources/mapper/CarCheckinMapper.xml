@@ -6,6 +6,7 @@
         insert into t_cardaka(
         daka_id,
         user_id,
+        open_id,
         car_id,
 		borrow_time,
 		borrow_pic,
@@ -15,6 +16,7 @@
         (
         #{dakaId},
         #{userId},
+        #{openId},
         #{carId},
 		#{borrowTime},
 		#{borrowPic},
@@ -29,7 +31,7 @@
 		return_pic=#{returnPic},
 		leave_word=#{leaveWord},
 		use_state=#{useState}
-		where user_id=#{userId} and use_state='已借用!'
+		where open_id=#{openId} and car_id=#{carId} and use_state='已借用!'
 	</update>
 
     <select id="search" parameterType="CarDaka" resultType="CarDaka">
@@ -37,7 +39,7 @@
 	</select>
 
     <select id="getstate" parameterType="CarDaka" resultType="CarDaka">
-		select * from t_cardaka where user_id=#{userId} and use_state='已借用!'
+		select * from t_cardaka where open_id=#{openId} and use_state='已借用!'
 	</select>
 
 	<select id="getdetail" parameterType="CarDaka" resultType="CarDaka">
@@ -49,15 +51,15 @@
 	</select>
 
 	<select id="getusetimes" parameterType="CarDaka" resultType="int">
-		select count(user_id) from t_cardaka where user_id=#{userId}
+		select count(user_id) from t_cardaka where open_id=#{openId}
 	</select>
 
 	<select id="lastusetime" parameterType="CarDaka" resultType="CarDaka">
-		select * from t_cardaka where user_id=#{userId} order by borrow_time desc
+		select * from t_cardaka where open_id=#{openId} order by borrow_time desc
 	</select>
 
 	<select id="getalltime" parameterType="CarDaka" resultType="CarDaka">
-		select * from t_cardaka where user_id=#{userId} and use_state='已归还!'
+		select * from t_cardaka where open_id=#{openId} and use_state='已归还!'
 	</select>
 
 	<insert id="accident" parameterType="Accident">
@@ -65,6 +67,7 @@
         ac_id,
         ac_time,
         user_id,
+        open_id,
 		ac_pics,
 		ac_word,
 		car_id
@@ -74,6 +77,7 @@
         #{acId},
         #{acTime},
         #{userId},
+        #{openId},
 		#{acPics},
 		#{acWord},
 		#{carId}
@@ -88,6 +92,40 @@
 		select * from t_accident where ac_id=#{acId}
 	</select>
 
+	<select id="canUsecar" parameterType="Car" resultType="Car">
+		select * from t_car
+	</select>
+
+	<update id="changeCarstate" parameterType="Car">
+		update t_car
+		set
+		car_state=#{carState}
+		where car_id=#{carId}
+	</update>
+
+	<select id="getOpenid" parameterType="Openid" resultType="Openid">
+		select * from dsws where openId=#{openId}
+	</select>
+
+	<select id="carstate" parameterType="Car" resultType="Car">
+		select * from t_car where car_id=#{carId}
+	</select>
+
+	<select id="vaguesearch" parameterType="CarDaka" resultType="CarDaka">
+		select * from t_cardaka where
+		1 = 1
+		<if test="dakaId != null and dakaId != ''">
+			AND CONCAT(user_id,car_id,borrow_time,return_time) LIKE CONCAT('%',#{dakaId},'%')
+		</if>
+	</select>
+
+	<select id="accidentvaguesearch" parameterType="Accident" resultType="Accident">
+		select * from t_accident where
+		1 = 1
+		<if test="carId != null and carId != ''">
+			AND CONCAT(car_id,user_id,ac_time) LIKE CONCAT('%',#{carId},'%')
+		</if>
+	</select>
 
 </mapper>
 

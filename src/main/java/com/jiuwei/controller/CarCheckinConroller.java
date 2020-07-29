@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jiuwei.common.SysResult;
 import com.jiuwei.entity.Accident;
+import com.jiuwei.entity.Car;
 import com.jiuwei.entity.CarDaka;
+import com.jiuwei.entity.Openid;
 import com.jiuwei.service.CarCheckinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,14 +58,36 @@ public class CarCheckinConroller {
 
     //借车打卡
     @PostMapping("/borrowcar")
-    public SysResult borrowCar(CarDaka carDaka, MultipartFile pic) {
+    public SysResult borrowCar(Openid openid,Car car, CarDaka carDaka, MultipartFile pic) {
         try {
             //System.out.println("controller1:"+pic);
             List<CarDaka> list = carCheckinService.getstate(carDaka);
+            //car.setCarState("false");
+            //List<Openid> openidList=carCheckinService.getOpenid(openid);
+            //String userId=openidList.get(0).getName();
+            //carDaka.setUserId(userId);
+            //carCheckinService.changeCarstate(car);
+            List<Car> carlist=carCheckinService.carstate(car);
+            String state=carlist.get(0).getCarState();
+            String bukejie="false";
+            //System.out.println(state);
             //System.out.println("借用"+list.size());
             if (list.size() == 0) {
-                carCheckinService.borrowCar(carDaka, pic);
-                return SysResult.ok();
+                //carCheckinService.borrowCar(car,carDaka, pic);
+                //System.out.println(1);
+                if(state.equals(bukejie)){
+                    //System.out.println(2);
+                    return SysResult.build(201, "车已被借用", null);
+                }else{
+                    //System.out.println(3);
+                    List<Openid> openidList=carCheckinService.getOpenid(openid);
+                    String userId=openidList.get(0).getName();
+                    carDaka.setUserId(userId);
+                    carCheckinService.borrowCar(car,carDaka, pic);
+                    car.setCarState("false");
+                    carCheckinService.changeCarstate(car);
+                    return SysResult.ok();
+                }
             } else {
                 return SysResult.build(201, "上次借用未归还", null);
             }
@@ -77,14 +101,16 @@ public class CarCheckinConroller {
 
     //还车打卡
     @PostMapping("/returncar")
-    public SysResult returnCar(CarDaka carDaka, MultipartFile pic) {
+    public SysResult returnCar(Car car,CarDaka carDaka, MultipartFile pic) {
         try {
             List<CarDaka> list = carCheckinService.getstate(carDaka);
             //System.out.println("归还"+list.size());
+            car.setCarState("true");
+            carCheckinService.changeCarstate(car);
             if (list.size() == 0) {
                 return SysResult.build(201, "未查到借用信息", null);
             } else {
-                carCheckinService.returnCar(carDaka, pic);
+                carCheckinService.returnCar(car,carDaka, pic);
                 return SysResult.ok();
             }
         } catch (Exception e) {
@@ -138,7 +164,7 @@ public class CarCheckinConroller {
     查询某个用户出车次数;总出车时长;最近一次出车时间
      */
     @PostMapping("use")
-    public SysResult use(CarDaka carDaka) throws ParseException {
+    public SysResult use(Openid openid,CarDaka carDaka) throws ParseException {
         int num = carCheckinService.getusetimes(carDaka);
         //System.out.println(num);
         if (num > 0) {
@@ -173,10 +199,13 @@ public class CarCheckinConroller {
 
             List<CarDaka> list2 = carCheckinService.lastusetime(carDaka);
             String lasttime = list2.get(0).getBorrowTime();
+            List<Openid> openidList=carCheckinService.getOpenid(openid);
+            String userId=openidList.get(0).getName();
             JSONObject object = new JSONObject();
             object.put("num", num);
             object.put("usetime", usetime);
             object.put("lasttime", lasttime);
+            object.put("userId",userId);
             return SysResult.build(200, "查询成功", object);
         } else {
             return SysResult.build(201, "未查到我的使用记录", null);
@@ -185,8 +214,11 @@ public class CarCheckinConroller {
 
     //出车异常
     @PostMapping("/accident")
-    public SysResult accident(Accident accident, String[] pic) {
+    public SysResult accident(Openid openid,Accident accident, String[] pic) {
         try {
+            List<Openid> openidList=carCheckinService.getOpenid(openid);
+            String userId=openidList.get(0).getName();
+            accident.setUserId(userId);
             carCheckinService.accident(accident, pic);
             return SysResult.build(200, "插入成功", accident);
         } catch (Exception e) {
@@ -217,4 +249,46 @@ public class CarCheckinConroller {
         }
     }
 
+    //查询可使用车辆
+    @PostMapping("/canUsecar")
+    public SysResult canUsecar(Car car) {
+        List<Car> list = carCheckinService.canUsecar(car);
+        if (list.size() == 0) {
+            return SysResult.build(201, "暂未可用车辆", list.size());
+        } else {
+            return SysResult.build(200, "这些车可使用", list);
+        }
+    }
+
+    //出车记录模糊查询
+    @PostMapping("/vaguesearch")
+    public SysResult vaguesearch(CarDaka carDaka) {
+        List<CarDaka> list = carCheckinService.vaguesearch(carDaka);
+        try{
+            if (list.size() > 0) {
+                return SysResult.build(200, "查询成功", list);
+            } else {
+                return SysResult.build(200, "没有此条记录", list);
+            }
+        }catch(Exception e){
+            return SysResult.build(201, "查询失败", null);
+        }
+
+    }
+
+    //出车记录模糊查询
+    @PostMapping("/accidentvaguesearch")
+    public SysResult accidentvaguesearch(Accident accident) {
+        List<Accident> list = carCheckinService.accidentvaguesearch(accident);
+        try{
+            if (list.size() > 0) {
+                return SysResult.build(200, "查询成功", list);
+            } else {
+                return SysResult.build(200, "没有此条记录", list);
+            }
+        }catch (Exception e){
+            return SysResult.build(201, "查询失败", null);
+        }
+
+    }
 }
